@@ -48,6 +48,297 @@ main {
     gap: 30px;
 }
 
+/* 학교 급식 메뉴 영역 */
+.school-meal-section {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.school-meal-section h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+/* API 키 설정 영역 */
+.api-key-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.api-key-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.api-key-group label {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+#apiKey {
+    padding: 8px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 300px;
+    transition: border-color 0.3s ease;
+}
+
+#apiKey:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.set-api-key-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.set-api-key-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.api-key-info {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.api-key-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.api-key-link:hover {
+    text-decoration: underline;
+}
+
+.school-code-help {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.school-code-help small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.school-code-help a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.school-code-help a:hover {
+    text-decoration: underline;
+}
+
+.school-input-area {
+    margin-bottom: 20px;
+}
+
+.school-input-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.school-input-group label {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+#schoolCode {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 200px;
+    transition: border-color 0.3s ease;
+}
+
+#schoolCode:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.fetch-meal-btn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.fetch-meal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+.fetch-meal-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.school-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+#schoolName {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.change-school-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.change-school-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.meal-display {
+    min-height: 100px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.no-meal-data {
+    color: #999;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+}
+
+.meal-data {
+    text-align: left;
+}
+
+.meal-date {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.meal-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.meal-item {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+}
+
+.meal-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.meal-type {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.meal-dishes {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.meal-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e9ecef;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.meal-error {
+    color: #dc3545;
+    background: #f8d7da;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #dc3545;
+}
+
 /* 게임 설정 영역 */
 .game-settings {
     background: white;

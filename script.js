@@ -7,6 +7,8 @@ class ClickSpeedGame {
         this.gameDuration = 10;
         this.timer = null;
         this.startTime = 0;
+        this.currentSchoolCode = null;
+        this.currentSchoolName = null;
         
         // DOM 요소들
         this.elements = {
@@ -22,11 +24,22 @@ class ClickSpeedGame {
             finalCps: document.getElementById('finalCps'),
             playAgainBtn: document.getElementById('playAgainBtn'),
             rankingList: document.getElementById('rankingList'),
-            clearRankingBtn: document.getElementById('clearRankingBtn')
+            clearRankingBtn: document.getElementById('clearRankingBtn'),
+        // 급식 관련 요소들
+        apiKey: document.getElementById('apiKey'),
+        setApiKeyBtn: document.getElementById('setApiKeyBtn'),
+        regionSelect: document.getElementById('regionSelect'),
+        schoolCode: document.getElementById('schoolCode'),
+        fetchMealBtn: document.getElementById('fetchMealBtn'),
+        schoolInfo: document.getElementById('schoolInfo'),
+        schoolName: document.getElementById('schoolName'),
+        changeSchoolBtn: document.getElementById('changeSchoolBtn'),
+        mealDisplay: document.getElementById('mealDisplay')
         };
         
         this.initializeEventListeners();
         this.loadRanking();
+        this.loadSchoolData();
     }
     
     // 이벤트 리스너 초기화
@@ -37,6 +50,21 @@ class ClickSpeedGame {
         this.elements.clearRankingBtn.addEventListener('click', () => this.clearRanking());
         this.elements.timeSelect.addEventListener('change', (e) => {
             this.gameDuration = parseInt(e.target.value);
+        });
+        
+        // 급식 관련 이벤트
+        this.elements.setApiKeyBtn.addEventListener('click', () => this.setApiKey());
+        this.elements.fetchMealBtn.addEventListener('click', () => this.fetchMealData());
+        this.elements.changeSchoolBtn.addEventListener('click', () => this.changeSchool());
+        this.elements.schoolCode.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.fetchMealData();
+            }
+        });
+        this.elements.apiKey.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.setApiKey();
+            }
         });
         
         // 키보드 이벤트 (스페이스바로 클릭)
@@ -255,6 +283,330 @@ class ClickSpeedGame {
             document.body.removeChild(message);
             document.head.removeChild(style);
         }, 2000);
+    }
+    
+    // 학교 데이터 로드
+    loadSchoolData() {
+        const savedApiKey = localStorage.getItem('neisApiKey');
+        const savedSchoolCode = localStorage.getItem('savedSchoolCode');
+        const savedSchoolName = localStorage.getItem('savedSchoolName');
+        const savedRegion = localStorage.getItem('savedRegion');
+        
+        // API 키 로드
+        if (savedApiKey) {
+            this.elements.apiKey.value = savedApiKey;
+            setApiKey(savedApiKey);
+        }
+        
+        // 학교 정보 로드
+        if (savedSchoolCode && savedSchoolName && savedRegion) {
+            this.currentSchoolCode = savedSchoolCode;
+            this.currentSchoolName = savedSchoolName;
+            this.currentRegion = savedRegion;
+            
+            this.elements.regionSelect.value = savedRegion;
+            this.elements.schoolCode.value = savedSchoolCode;
+            this.elements.schoolName.textContent = savedSchoolName;
+            this.elements.schoolInfo.style.display = 'flex';
+            this.elements.regionSelect.style.display = 'none';
+            this.elements.schoolCode.style.display = 'none';
+            this.elements.fetchMealBtn.style.display = 'none';
+            this.fetchMealData();
+        }
+    }
+    
+    // 급식 데이터 조회
+    async fetchMealData() {
+        const region = this.elements.regionSelect.value;
+        const schoolCode = this.elements.schoolCode.value.trim();
+        
+        if (!region) {
+            alert('지역을 선택해주세요.');
+            return;
+        }
+        
+        if (!schoolCode) {
+            alert('학교 코드를 입력해주세요.');
+            return;
+        }
+        
+        // 로딩 상태 표시
+        this.showLoadingState();
+        
+        try {
+            // 날짜 범위 설정 (오늘부터 5일간)
+            const today = new Date();
+            const startDate = this.formatDate(today);
+            const endDate = this.formatDate(new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000));
+            
+            let mealData;
+            
+            try {
+                // 실제 NEIS API 호출
+                const apiData = await this.fetchNeisApi(region, schoolCode, startDate, endDate);
+                mealData = this.parseMealData(apiData);
+                
+                if (mealData.error) {
+                    throw new Error(mealData.message);
+                }
+            } catch (apiError) {
+                console.warn('API 호출 실패, 샘플 데이터 사용:', apiError);
+                // API 실패 시 샘플 데이터 사용
+                mealData = await this.getMockMealData(schoolCode);
+            }
+            
+            // 학교 정보 저장
+            this.currentSchoolCode = schoolCode;
+            this.currentSchoolName = mealData.schoolName;
+            this.currentRegion = region;
+            this.saveSchoolData();
+            
+            // UI 업데이트
+            this.updateSchoolUI();
+            this.displayMealData(mealData.meals);
+            
+        } catch (error) {
+            console.error('급식 데이터 조회 실패:', error);
+            this.showErrorState(error.message || '급식 데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+    
+    // 날짜 포맷팅 (YYYYMMDD)
+    formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+    }
+    
+    // API 키 설정
+    setApiKey() {
+        const apiKey = this.elements.apiKey.value.trim();
+        if (apiKey) {
+            setApiKey(apiKey);
+            localStorage.setItem('neisApiKey', apiKey);
+            alert('API 키가 설정되었습니다!');
+        } else {
+            alert('API 키를 입력해주세요.');
+        }
+    }
+    
+    // 실제 NEIS API 호출
+    async fetchNeisApi(region, schoolCode, startDate, endDate) {
+        const educationOfficeCode = API_CONFIG.EDUCATION_OFFICE_CODES[region];
+        if (!educationOfficeCode) {
+            throw new Error('지역을 선택해주세요.');
+        }
+        
+        if (!schoolCode || schoolCode.length < 7) {
+            throw new Error('올바른 학교 코드를 입력해주세요. (7자리 이상)');
+        }
+        
+        const params = new URLSearchParams({
+            KEY: API_CONFIG.API_KEY,
+            Type: API_CONFIG.DEFAULT_PARAMS.Type,
+            pIndex: API_CONFIG.DEFAULT_PARAMS.pIndex,
+            pSize: API_CONFIG.DEFAULT_PARAMS.pSize,
+            ATPT_OFCDC_SC_CODE: educationOfficeCode,
+            SD_SCHUL_CODE: schoolCode,
+            MLSV_FROM_YMD: startDate,
+            MLSV_TO_YMD: endDate
+        });
+        
+        const url = `${API_CONFIG.BASE_URL}?${params}`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.RESULT && data.RESULT.CODE !== 'INFO-000') {
+                throw new Error(data.RESULT.MESSAGE || 'API 호출 중 오류가 발생했습니다.');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('API 호출 실패:', error);
+            throw error;
+        }
+    }
+    
+    // API 응답 데이터 파싱
+    parseMealData(apiData) {
+        if (!apiData.mealServiceDietInfo || !apiData.mealServiceDietInfo[1] || !apiData.mealServiceDietInfo[1].row) {
+            return {
+                error: true,
+                message: '급식 정보를 찾을 수 없습니다. 학교 코드와 지역을 확인해주세요.'
+            };
+        }
+        
+        const mealRows = apiData.mealServiceDietInfo[1].row;
+        const schoolName = mealRows[0]?.SCHUL_NM || '알 수 없는 학교';
+        
+        // 날짜별로 그룹화
+        const mealsByDate = {};
+        
+        mealRows.forEach(row => {
+            const date = row.MLSV_YMD;
+            const mealType = row.MMEAL_SC_NM;
+            const dishes = row.DDISH_NM.split('<br/>').filter(dish => dish.trim());
+            
+            if (!mealsByDate[date]) {
+                mealsByDate[date] = {};
+            }
+            
+            mealsByDate[date][mealType] = dishes;
+        });
+        
+        // 날짜별 메뉴 배열로 변환
+        const meals = Object.keys(mealsByDate)
+            .sort()
+            .map(date => {
+                const dateObj = new Date(
+                    date.substring(0, 4),
+                    date.substring(4, 6) - 1,
+                    date.substring(6, 8)
+                );
+                
+                const formattedDate = dateObj.toLocaleDateString('ko-KR', {
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                
+                const dailyMeals = Object.keys(mealsByDate[date]).map(mealType => ({
+                    type: mealType,
+                    dishes: mealsByDate[date][mealType]
+                }));
+                
+                return {
+                    date: formattedDate,
+                    meals: dailyMeals
+                };
+            });
+        
+        return {
+            schoolName: schoolName,
+            meals: meals
+        };
+    }
+    
+    // 모의 급식 데이터 생성 (API 실패 시 백업)
+    async getMockMealData(schoolCode) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const today = new Date();
+                const meals = [];
+                
+                for (let i = 0; i < 5; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    
+                    const mealTypes = ['조식', '중식', '석식'];
+                    const menuItems = [
+                        ['김치찌개', '불고기', '밥', '국'],
+                        ['된장찌개', '제육볶음', '밥', '국'],
+                        ['순두부찌개', '닭볶음탕', '밥', '국'],
+                        ['부대찌개', '돈까스', '밥', '국'],
+                        ['해물탕', '치킨', '밥', '국']
+                    ];
+                    
+                    const dailyMeals = mealTypes.map(type => ({
+                        type: type,
+                        dishes: menuItems[i % menuItems.length]
+                    }));
+                    
+                    meals.push({
+                        date: date.toLocaleDateString('ko-KR', { 
+                            month: 'long', 
+                            day: 'numeric', 
+                            weekday: 'long' 
+                        }),
+                        meals: dailyMeals
+                    });
+                }
+                
+                resolve({
+                    schoolName: `학교 ${schoolCode.slice(-4)} (샘플 데이터)`,
+                    meals: meals
+                });
+            }, 1000);
+        });
+    }
+    
+    // 로딩 상태 표시
+    showLoadingState() {
+        this.elements.mealDisplay.innerHTML = `
+            <div class="meal-loading">
+                <div class="loading-spinner"></div>
+                급식 메뉴를 불러오는 중...
+            </div>
+        `;
+        this.elements.fetchMealBtn.disabled = true;
+    }
+    
+    // 에러 상태 표시
+    showErrorState(message) {
+        this.elements.mealDisplay.innerHTML = `
+            <div class="meal-error">
+                ${message}
+            </div>
+        `;
+        this.elements.fetchMealBtn.disabled = false;
+    }
+    
+    // 급식 데이터 표시
+    displayMealData(meals) {
+        const mealHtml = meals.map(day => `
+            <div class="meal-data">
+                <div class="meal-date">${day.date}</div>
+                <div class="meal-menu">
+                    ${day.meals.map(meal => `
+                        <div class="meal-item">
+                            <div class="meal-type">${meal.type}</div>
+                            <div class="meal-dishes">${meal.dishes.join(', ')}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+        
+        this.elements.mealDisplay.innerHTML = mealHtml;
+        this.elements.fetchMealBtn.disabled = false;
+    }
+    
+    // 학교 UI 업데이트
+    updateSchoolUI() {
+        this.elements.schoolName.textContent = this.currentSchoolName;
+        this.elements.schoolInfo.style.display = 'flex';
+        this.elements.regionSelect.style.display = 'none';
+        this.elements.schoolCode.style.display = 'none';
+        this.elements.fetchMealBtn.style.display = 'none';
+    }
+    
+    // 학교 변경
+    changeSchool() {
+        this.elements.schoolInfo.style.display = 'none';
+        this.elements.regionSelect.style.display = 'block';
+        this.elements.schoolCode.style.display = 'block';
+        this.elements.fetchMealBtn.style.display = 'inline-block';
+        this.elements.regionSelect.value = '';
+        this.elements.schoolCode.value = '';
+        this.elements.mealDisplay.innerHTML = '<div class="no-meal-data">지역과 학교 코드를 입력하고 급식 메뉴를 조회해보세요!</div>';
+        
+        // 저장된 데이터 삭제
+        localStorage.removeItem('savedSchoolCode');
+        localStorage.removeItem('savedSchoolName');
+        localStorage.removeItem('savedRegion');
+        this.currentSchoolCode = null;
+        this.currentSchoolName = null;
+        this.currentRegion = null;
+    }
+    
+    // 학교 데이터 저장
+    saveSchoolData() {
+        localStorage.setItem('savedSchoolCode', this.currentSchoolCode);
+        localStorage.setItem('savedSchoolName', this.currentSchoolName);
+        localStorage.setItem('savedRegion', this.currentRegion);
     }
 }
 

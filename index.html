@@ -3,17 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클릭 속도 테스트</title>
+    <title>클릭 속도 테스트 & 학교 급식 메뉴</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🚀 클릭 속도 테스트</h1>
-            <p>제한 시간 동안 최대한 많이 클릭해보세요!</p>
+            <h1>🚀 클릭 속도 테스트 & 학교 급식 메뉴</h1>
+            <p>제한 시간 동안 최대한 많이 클릭하고, 학교 급식 메뉴도 확인해보세요!</p>
         </header>
 
         <main>
+            <!-- 학교 급식 메뉴 영역 -->
+            <div class="school-meal-section">
+                <h3>🍽️ 학교 급식 메뉴</h3>
+                
+                <!-- API 키 설정 영역 -->
+                <div class="api-key-section">
+                    <div class="api-key-group">
+                        <label for="apiKey">API 인증키:</label>
+                        <input type="text" id="apiKey" placeholder="나이스교육정보개방포털에서 발급받은 인증키를 입력하세요">
+                        <button id="setApiKeyBtn" class="set-api-key-btn">키 설정</button>
+                    </div>
+                    <div class="api-key-info">
+                        <small>💡 인증키가 없으면 샘플 데이터(5건 제한)로 조회됩니다.</small>
+                        <a href="https://open.neis.go.kr/" target="_blank" class="api-key-link">인증키 발급받기</a>
+                    </div>
+                </div>
+                
+                <div class="school-input-area">
+                    <div class="school-input-group">
+                        <label for="regionSelect">지역:</label>
+                        <select id="regionSelect">
+                            <option value="">지역을 선택하세요</option>
+                            <option value="서울">서울특별시</option>
+                            <option value="부산">부산광역시</option>
+                            <option value="대구">대구광역시</option>
+                            <option value="인천">인천광역시</option>
+                            <option value="광주">광주광역시</option>
+                            <option value="대전">대전광역시</option>
+                            <option value="울산">울산광역시</option>
+                            <option value="세종">세종특별자치시</option>
+                            <option value="경기">경기도</option>
+                            <option value="강원">강원도</option>
+                            <option value="충북">충청북도</option>
+                            <option value="충남">충청남도</option>
+                            <option value="전북">전라북도</option>
+                            <option value="전남">전라남도</option>
+                            <option value="경북">경상북도</option>
+                            <option value="경남">경상남도</option>
+                            <option value="제주">제주특별자치도</option>
+                        </select>
+                        <label for="schoolCode">학교 코드:</label>
+                        <input type="text" id="schoolCode" placeholder="학교 코드를 입력하세요 (7자리)">
+                        <button id="fetchMealBtn" class="fetch-meal-btn">급식 메뉴 조회</button>
+                        <div class="school-code-help">
+                            <small>💡 학교 코드는 <a href="https://open.neis.go.kr/portal/data/service/selectServicePage.do?page=1&rows=10&sortColumn=&sortDirection=&infId=OPEN17020190531110010104913&infSeq=1" target="_blank">학교기본정보 데이터셋</a>에서 조회할 수 있습니다.</small>
+                        </div>
+                    </div>
+                    <div class="school-info" id="schoolInfo" style="display: none;">
+                        <span id="schoolName">학교명</span>
+                        <button id="changeSchoolBtn" class="change-school-btn">학교 변경</button>
+                    </div>
+                </div>
+                <div class="meal-display" id="mealDisplay">
+                    <div class="no-meal-data">지역과 학교 코드를 입력하고 급식 메뉴를 조회해보세요!</div>
+                </div>
+            </div>
+
             <!-- 게임 설정 영역 -->
             <div class="game-settings">
                 <div class="time-setting">
@@ -82,6 +139,7 @@
         </footer>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
