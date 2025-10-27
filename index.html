@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클릭 속도 테스트</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 클릭 속도 테스트</h1>
+            <p>제한 시간 동안 최대한 많이 클릭해보세요!</p>
+        </header>
+
+        <main>
+            <!-- 게임 설정 영역 -->
+            <div class="game-settings">
+                <div class="time-setting">
+                    <label for="timeSelect">제한 시간:</label>
+                    <select id="timeSelect">
+                        <option value="5">5초</option>
+                        <option value="10" selected>10초</option>
+                        <option value="15">15초</option>
+                        <option value="30">30초</option>
+                    </select>
+                </div>
+                <button id="startBtn" class="start-btn">게임 시작</button>
+            </div>
+
+            <!-- 게임 영역 -->
+            <div class="game-area" id="gameArea">
+                <div class="timer-display">
+                    <span id="timer">10</span>초
+                </div>
+                
+                <div class="click-counter">
+                    <span id="clickCount">0</span>회 클릭
+                </div>
+
+                <div class="click-zone" id="clickZone">
+                    <div class="click-instruction">
+                        여기를 클릭하세요!
+                    </div>
+                </div>
+
+                <div class="game-stats">
+                    <div class="cps-display">
+                        CPS: <span id="cps">0.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 결과 영역 -->
+            <div class="result-area" id="resultArea" style="display: none;">
+                <h2>게임 종료!</h2>
+                <div class="final-score">
+                    <div class="score-item">
+                        <span class="score-label">총 클릭 수:</span>
+                        <span class="score-value" id="finalClicks">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">평균 CPS:</span>
+                        <span class="score-value" id="finalCps">0.0</span>
+                    </div>
+                </div>
+                <button id="playAgainBtn" class="play-again-btn">다시 플레이</button>
+            </div>
+
+            <!-- 랭킹 영역 -->
+            <div class="ranking-area">
+                <h3>🏆 최고 기록</h3>
+                <div class="ranking-list" id="rankingList">
+                    <div class="no-records">아직 기록이 없습니다.</div>
+                </div>
+                <button id="clearRankingBtn" class="clear-btn">기록 초기화</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>최고 기록은 브라우저에 저장됩니다.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

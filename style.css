@@ -1,0 +1,452 @@
+/* 기본 스타일 리셋 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 헤더 스타일 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* 메인 컨텐츠 */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* 게임 설정 영역 */
+.game-settings {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.time-setting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-setting label {
+    font-weight: 600;
+    color: #555;
+}
+
+#timeSelect {
+    padding: 8px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+#timeSelect:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.start-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.start-btn:active {
+    transform: translateY(0);
+}
+
+/* 게임 영역 */
+.game-area {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.game-area.game-active {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.timer-display {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.timer-display.warning {
+    color: #ff6b6b;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.click-counter {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.click-zone {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.click-zone:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.click-zone:active {
+    transform: scale(0.95);
+}
+
+.click-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.click-zone:hover::before {
+    opacity: 1;
+}
+
+.click-instruction {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    z-index: 1;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.cps-display {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #666;
+    background: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 2px solid #e9ecef;
+}
+
+/* 결과 영역 */
+.result-area {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-area h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.final-score {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.score-label {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.score-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.play-again-btn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.play-again-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+/* 랭킹 영역 */
+.ranking-area {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.ranking-area h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.ranking-list {
+    margin-bottom: 20px;
+}
+
+.ranking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.ranking-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.ranking-item.new-record {
+    background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+    border-left-color: #ffc107;
+    animation: highlight 2s ease;
+}
+
+@keyframes highlight {
+    0%, 100% { background: linear-gradient(45deg, #fff3cd, #ffeaa7); }
+    50% { background: linear-gradient(45deg, #ffeaa7, #fff3cd); }
+}
+
+.rank-number {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.rank-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.rank-clicks {
+    font-weight: 600;
+    color: #333;
+}
+
+.rank-cps {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.rank-date {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.no-records {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+.clear-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.clear-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+/* 푸터 */
+footer {
+    text-align: center;
+    color: white;
+    opacity: 0.8;
+    margin-top: 30px;
+    font-size: 0.9rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .game-settings {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .click-zone {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .final-score {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .game-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .ranking-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+    
+    .rank-info {
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .click-zone {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .timer-display {
+        font-size: 2.5rem;
+    }
+    
+    .click-counter {
+        font-size: 1.5rem;
+    }
+}
