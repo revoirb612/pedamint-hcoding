@@ -9,6 +9,7 @@ class ClickSpeedGame {
         this.startTime = 0;
         this.currentSchoolCode = null;
         this.currentSchoolName = null;
+        this.currentUsername = null;
         
         // DOM 요소들
         this.elements = {
@@ -32,14 +33,23 @@ class ClickSpeedGame {
         schoolCode: document.getElementById('schoolCode'),
         fetchMealBtn: document.getElementById('fetchMealBtn'),
         schoolInfo: document.getElementById('schoolInfo'),
-        schoolName: document.getElementById('schoolName'),
-        changeSchoolBtn: document.getElementById('changeSchoolBtn'),
-        mealDisplay: document.getElementById('mealDisplay')
+            schoolName: document.getElementById('schoolName'),
+            changeSchoolBtn: document.getElementById('changeSchoolBtn'),
+            mealDisplay: document.getElementById('mealDisplay'),
+            // 랭킹 관련 요소들
+            username: document.getElementById('username'),
+            setUsernameBtn: document.getElementById('setUsernameBtn'),
+            usernameInfo: document.getElementById('usernameInfo'),
+            currentUsername: document.getElementById('currentUsername'),
+            changeUsernameBtn: document.getElementById('changeUsernameBtn'),
+            onlineRankingList: document.getElementById('onlineRankingList'),
+            refreshOnlineRankingBtn: document.getElementById('refreshOnlineRankingBtn')
         };
         
         this.initializeEventListeners();
         this.loadRanking();
         this.loadSchoolData();
+        this.loadUsername();
     }
     
     // 이벤트 리스너 초기화
@@ -65,6 +75,21 @@ class ClickSpeedGame {
             if (e.key === 'Enter') {
                 this.setApiKey();
             }
+        });
+        
+        // 랭킹 관련 이벤트
+        this.elements.setUsernameBtn.addEventListener('click', () => this.setUsername());
+        this.elements.changeUsernameBtn.addEventListener('click', () => this.changeUsername());
+        this.elements.username.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.setUsername();
+            }
+        });
+        this.elements.refreshOnlineRankingBtn.addEventListener('click', () => this.loadOnlineRanking());
+        
+        // 탭 전환 이벤트
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
         });
         
         // 키보드 이벤트 (스페이스바로 클릭)
@@ -161,6 +186,9 @@ class ClickSpeedGame {
         
         // 랭킹 업데이트
         this.updateRanking(gameResult);
+        
+        // 온라인 랭킹 제출
+        this.submitOnlineRanking(this.clickCount);
         
         // UI 리셋
         this.elements.startBtn.textContent = '게임 시작';
@@ -607,6 +635,145 @@ class ClickSpeedGame {
         localStorage.setItem('savedSchoolCode', this.currentSchoolCode);
         localStorage.setItem('savedSchoolName', this.currentSchoolName);
         localStorage.setItem('savedRegion', this.currentRegion);
+    }
+    
+    // 사용자명 설정
+    setUsername() {
+        const username = this.elements.username.value.trim();
+        if (username) {
+            this.currentUsername = username;
+            localStorage.setItem('username', username);
+            this.updateUsernameUI();
+            alert('사용자명이 설정되었습니다!');
+        } else {
+            alert('사용자명을 입력해주세요.');
+        }
+    }
+    
+    // 사용자명 변경
+    changeUsername() {
+        this.elements.usernameInfo.style.display = 'none';
+        this.elements.username.style.display = 'block';
+        this.elements.setUsernameBtn.style.display = 'inline-block';
+        this.elements.username.value = '';
+    }
+    
+    // 사용자명 UI 업데이트
+    updateUsernameUI() {
+        this.elements.currentUsername.textContent = this.currentUsername;
+        this.elements.usernameInfo.style.display = 'flex';
+        this.elements.username.style.display = 'none';
+        this.elements.setUsernameBtn.style.display = 'none';
+    }
+    
+    // 사용자명 로드
+    loadUsername() {
+        const savedUsername = localStorage.getItem('username');
+        if (savedUsername) {
+            this.currentUsername = savedUsername;
+            this.elements.username.value = savedUsername;
+            this.updateUsernameUI();
+        }
+    }
+    
+    // 탭 전환
+    switchTab(tabName) {
+        // 탭 버튼 활성화 상태 변경
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // 콘텐츠 표시/숨김
+        document.getElementById('localRanking').style.display = tabName === 'local' ? 'block' : 'none';
+        document.getElementById('onlineRanking').style.display = tabName === 'online' ? 'block' : 'none';
+        
+        // 온라인 랭킹 탭 선택 시 자동 로드
+        if (tabName === 'online') {
+            this.loadOnlineRanking();
+        }
+    }
+    
+    // 온라인 랭킹 제출
+    async submitOnlineRanking(score) {
+        if (!this.currentUsername) {
+            alert('온라인 랭킹 제출을 위해 사용자명을 먼저 설정해주세요.');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API_CONFIG.RANK_API.BASE_URL}${API_CONFIG.RANK_API.ENDPOINTS.SUBMIT}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    program_key: API_CONFIG.RANK_API.PROGRAM_KEY,
+                    score: score,
+                    username: this.currentUsername
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                console.log('온라인 랭킹 제출 성공:', result);
+                // 온라인 랭킹 새로고침
+                this.loadOnlineRanking();
+            } else {
+                console.error('온라인 랭킹 제출 실패:', result);
+            }
+        } catch (error) {
+            console.error('온라인 랭킹 제출 중 오류:', error);
+        }
+    }
+    
+    // 온라인 랭킹 조회
+    async loadOnlineRanking() {
+        this.elements.onlineRankingList.innerHTML = '<div class="no-records">온라인 랭킹을 불러오는 중...</div>';
+        
+        try {
+            const response = await fetch(`${API_CONFIG.RANK_API.BASE_URL}${API_CONFIG.RANK_API.ENDPOINTS.GET_RANKS}/${API_CONFIG.RANK_API.PROGRAM_KEY}`);
+            const data = await response.json();
+            
+            if (response.ok && Array.isArray(data)) {
+                this.displayOnlineRanking(data);
+            } else {
+                this.elements.onlineRankingList.innerHTML = '<div class="no-records">온라인 랭킹을 불러올 수 없습니다.</div>';
+            }
+        } catch (error) {
+            console.error('온라인 랭킹 조회 실패:', error);
+            this.elements.onlineRankingList.innerHTML = '<div class="no-records">온라인 랭킹을 불러올 수 없습니다.</div>';
+        }
+    }
+    
+    // 온라인 랭킹 표시
+    displayOnlineRanking(rankings) {
+        if (rankings.length === 0) {
+            this.elements.onlineRankingList.innerHTML = '<div class="no-records">아직 온라인 기록이 없습니다.</div>';
+            return;
+        }
+        
+        this.elements.onlineRankingList.innerHTML = rankings.map((record, index) => {
+            const date = new Date(record.timestamp);
+            const formattedDate = date.toLocaleDateString('ko-KR', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="ranking-item">
+                    <div class="rank-number">#${index + 1}</div>
+                    <div class="rank-info">
+                        <div class="rank-clicks">${record.username}</div>
+                        <div class="rank-cps">${record.score}회 클릭</div>
+                        <div class="rank-date">${formattedDate}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 }
 

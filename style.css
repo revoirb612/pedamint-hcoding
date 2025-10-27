@@ -30,9 +30,10 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    white-space: nowrap;
 }
 
 header p {
@@ -585,6 +586,146 @@ main {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+/* 사용자명 설정 영역 */
+.username-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.username-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.username-group label {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+#username {
+    padding: 8px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+#username:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.set-username-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.set-username-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.username-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#currentUsername {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.change-username-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.change-username-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* 랭킹 탭 */
+.ranking-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    color: #667eea;
+    background: #f8f9fa;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+/* 랭킹 콘텐츠 */
+.ranking-content {
+    min-height: 200px;
+}
+
+.refresh-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 15px auto 0;
+}
+
+.refresh-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
 .ranking-area h3 {
     color: #667eea;
     margin-bottom: 20px;
@@ -693,7 +834,8 @@ footer {
     }
     
     header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        white-space: normal;
     }
     
     .game-settings {

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클릭 속도 테스트 & 학교 급식 메뉴</title>
+    <title>온라인 클릭 속도 테스트 & 학교 급식 메뉴</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🚀 클릭 속도 테스트 & 학교 급식 메뉴</h1>
+            <h1>🚀 온라인 클릭 속도 테스트 & 학교 급식 메뉴</h1>
             <p>제한 시간 동안 최대한 많이 클릭하고, 학교 급식 메뉴도 확인해보세요!</p>
         </header>
 
@@ -127,10 +127,41 @@
             <!-- 랭킹 영역 -->
             <div class="ranking-area">
                 <h3>🏆 최고 기록</h3>
-                <div class="ranking-list" id="rankingList">
-                    <div class="no-records">아직 기록이 없습니다.</div>
+                
+                <!-- 사용자명 설정 -->
+                <div class="username-section">
+                    <div class="username-group">
+                        <label for="username">사용자명:</label>
+                        <input type="text" id="username" placeholder="사용자명을 입력하세요" maxlength="20">
+                        <button id="setUsernameBtn" class="set-username-btn">설정</button>
+                    </div>
+                    <div class="username-info" id="usernameInfo" style="display: none;">
+                        <span id="currentUsername">사용자명</span>
+                        <button id="changeUsernameBtn" class="change-username-btn">변경</button>
+                    </div>
                 </div>
-                <button id="clearRankingBtn" class="clear-btn">기록 초기화</button>
+                
+                <!-- 랭킹 탭 -->
+                <div class="ranking-tabs">
+                    <button class="tab-btn active" data-tab="local">로컬 랭킹</button>
+                    <button class="tab-btn" data-tab="online">온라인 랭킹</button>
+                </div>
+                
+                <!-- 로컬 랭킹 -->
+                <div class="ranking-content" id="localRanking">
+                    <div class="ranking-list" id="rankingList">
+                        <div class="no-records">아직 기록이 없습니다.</div>
+                    </div>
+                    <button id="clearRankingBtn" class="clear-btn">로컬 기록 초기화</button>
+                </div>
+                
+                <!-- 온라인 랭킹 -->
+                <div class="ranking-content" id="onlineRanking" style="display: none;">
+                    <div class="ranking-list" id="onlineRankingList">
+                        <div class="no-records">온라인 랭킹을 불러오는 중...</div>
+                    </div>
+                    <button id="refreshOnlineRankingBtn" class="refresh-btn">새로고침</button>
+                </div>
             </div>
         </main>
 

@@ -40,6 +40,16 @@ const API_CONFIG = {
         '조식': '1',
         '중식': '2',
         '석식': '3'
+    },
+    
+    // Rank API 설정
+    RANK_API: {
+        BASE_URL: 'https://www.한뼘코딩.com/api',
+        PROGRAM_KEY: 'click_speed_test_v1', // 클릭 속도 테스트 프로그램 고유 키
+        ENDPOINTS: {
+            SUBMIT: '/submit_rank',
+            GET_RANKS: '/get_ranks'
+        }
     }
 };
 
